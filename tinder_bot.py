@@ -1,16 +1,15 @@
 from selenium import webdriver
 from time import sleep
+from selenium.common.exceptions import NoSuchElementException
+
 from config import username, password
 
 
-# Tworzenie klasy TinderBot
 class TinderBot():
     def __init__(self):
         self.driver = webdriver.Chrome()
 
-        # Metoda login umożliwia automatyczna zalogowanie do swojego konta
-        #
-
+    @property
     def login(self):
         def check_exists_by_xpath(xpath):
             try:
@@ -23,30 +22,38 @@ class TinderBot():
 
         sleep(4)
 
-        # Wybieranie logowania za pomocą facebook'a
+        check_more_options = check_exists_by_xpath('//button[text()="Więcej opcji"]')
+        if (check_more_options != None):
+            check_more_options.click()
 
-        fb_lc = self.driver.find_element_by_xpath('//*[@id="modal-manager"]/div/div/div/div/div[3]/span/div[2]/button')
-        fb_lc.click()
+        sleep(2)
 
-        # Zatwierczenie plików cookie's
+        fb_btn = self.driver.find_element_by_css_selector('button[aria-label="Zaloguj się przez Facebooka"]')
+        fb_btn.click()
 
-        # Przełączenie się na drugie okno w celu logowania
-
+        # switch to login popup
         base_window = self.driver.window_handles[0]
-        popup = self.driver.switch_to_window(self.driver.window_handles[1])
-
-        # Wprowadzanie maila oraz hasla
+        self.driver.switch_to_window(self.driver.window_handles[1])
 
         email_in = self.driver.find_element_by_xpath('//*[@id="email"]')
         email_in.send_keys(username)
+
         pw_in = self.driver.find_element_by_xpath('//*[@id="pass"]')
         pw_in.send_keys(password)
 
-        # Logowanie do platformy
-        login_bnt = self.driver.find_element_by_xpath('//*[@id="loginbutton"]')
-        login_bnt.click()
+        login_btn = self.driver.find_element_by_xpath('//*[@id="u_0_0"]')
+        login_btn.click()
 
-        # Zatwierdzanie wtyczki pozwalającej na zaktualizwowanie lokalizacji
-        self.driver.switch_to_window(base_window)
-        popup_1 = self.driver.find_element_by_xpath('//*[@id="modal-manager"]/div/div/div/div/div[3]/button[1]')
+        sleep(4)
+
+        self.driver.switch_to_window(self.driver.window_handles[0])
+
+        sleep(4)
+
+        popup_1 = self.driver.find_element_by_css_selector('button[aria-label="Zezwól"]')
         popup_1.click()
+
+        sleep(2)
+
+        popup_2 = self.driver.find_element_by_css_selector('button[aria-label="Nie interesuje mnie to"]')
+        popup_2.click()
