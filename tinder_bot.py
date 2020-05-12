@@ -1,8 +1,7 @@
 from selenium import webdriver
 from time import sleep
 from selenium.common.exceptions import NoSuchElementException
-from random import  random
-
+from random import random
 from config import username, password
 
 
@@ -10,7 +9,7 @@ class TinderBot():
     def __init__(self):
         self.driver = webdriver.Chrome()
 
-
+# Logowanie do platformy
     def login(self):
         def check_exists_by_xpath(xpath):
             try:
@@ -59,46 +58,63 @@ class TinderBot():
         popup_2 = self.driver.find_element_by_css_selector('button[aria-label="Nie interesuje mnie to"]')
         popup_2.click()
 
+# Dodawanie lajka dla danego profilu
     def like(self):
         like_btn = self.driver.find_element_by_css_selector('button[aria-label="Polub"]')
         like_btn.click()
 
+# Dawanie dislike dla danego profilu
     def dislike(self):
         dislike_btn = self.driver.find_element_by_css_selector('button[aria-label="Żegnam"]')
         self.driver.get()
         dislike_btn.click()
 
+#Wyszukiwanie imienia
+    def read_name(self):
+        g_name = self.driver.find_element_by_xpath('//*[@id="content"]/div/div[1]/div/div/main/div/div[1]/div/div[1]/div[3]/div[6]/div/div[1]/div/div/span').text
+        age = self.driver.find_element_by_xpath('//*[@id="content"]/div/div[1]/div/div/main/div/div[1]/div/div[1]/div[3]/div[6]/div/div[1]/div/span').text
+        description = self.driver.find_element_by_class_name('BreakWord').text
+
+    def send_msg_to_mach(self):
+        girl_name = self.driver.find_element_by_xpath('//*[@id="modal-manager-canvas"]/div/div/div[1]/div/div[3]/div[2]')
+        smtm = self.driver.find_element_by_xpath('//*[@id="modal-manager-canvas"]/div/div/div[1]/div/div[3]/div[3]/form')
+        # smtm.send_keys(f'Cześć {} czy zostałaś już nominowana do hot16? ;P')
+
+# Automatyczne przesuwanie po profilach
     def auto_swipe(self):
         r_counter = 0
         l_counter = 0
-        while True:
-            sleep(3)
+        # while True:
+        for i in range(15):
+            sleep(5)
             try:
                 rand = random()
-                if rand < 0.80:
+                if rand < 0.73:
                     self.like()
                     r_counter += 1
                     print(f"{r_counter}te przesunięcie w prawo")
+                    i += 1
                 else:
                     self.dislike()
                     l_counter += 1
                     print(f"{l_counter}te przesunięcie w lewo")
-
+                    i += 1
             except Exception:
                 try:
                     self.close_popup()
                 except Exception:
                     self.close_match()
 
-    # def message_all(self):
-    #     matches = self.driver.find_element_by_class_name('matchListNoMessages')
-
     def close_popup(self):
-        popup_3 = self.driver.find_element_by_xpath('//*[@id="modal-manager"]/div/div/div[2]/button[2]')
+        popup_3 = self.driver.find_element_by_xpath('//*[@id="modal-manager-canvas"]/div/div/div[1]/div/div[3]/a')
         popup_3.click()
+
     def close_match(self):
         match_popup = self.driver.find_element_by_xpath('//*[@id="modal-manager-canvas"]/div/div/div[1]/div/div[3]/a')
         match_popup.click()
+
+
+
 
 bot = TinderBot()
 bot.login()
