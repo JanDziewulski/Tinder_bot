@@ -86,11 +86,12 @@ class TinderBot():
     def send_msg(self):
         maches = self.driver.find_elements_by_class_name('matchListItem')
         name = maches[1].text
+        age = self.driver.find_element_by_xpath('//*[@id="content"]/div/div[1]/div/main/div[1]/div/div/div/div[2]/div/div[1]/div/div/div[2]/div/div/div[1]/span').text
         maches[1].click()
         sleep(2)
         msg = self.driver.find_element_by_class_name('sendMessageForm__input')
-        msg.send_keys('Część mam nadzieję, że potrafisz śpiewać bo własnie nominuję Cię do ho16!')
-        self.driver.find_element_by_xpath('//*[@id="content"]/div/div[1]/div/div/main/div/div[2]/form/button/span')
+        msg.send_keys(f'Cześć {name} mam nadzieję, że potrafisz śpiewać bo własnie nominuję Cię do hot{age}!')
+        self.driver.find_element_by_xpath('//*[@id="content"]/div/div[1]/div/div/main/div/div[2]/form/button').click()
         sleep(2)
         pairs = self.driver.find_element_by_xpath('//*[@id="match-tab"]')
         pairs.click()
