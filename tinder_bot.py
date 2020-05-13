@@ -66,8 +66,9 @@ class TinderBot():
 # Dawanie dislike dla danego profilu
     def dislike(self):
         dislike_btn = self.driver.find_element_by_css_selector('button[aria-label="Żegnam"]')
-        self.driver.get()
+        # self.driver.get()
         dislike_btn.click()
+
 
 #Wyszukiwanie imienia
     def read_name(self):
@@ -75,10 +76,25 @@ class TinderBot():
         age = self.driver.find_element_by_xpath('//*[@id="content"]/div/div[1]/div/div/main/div/div[1]/div/div[1]/div[3]/div[6]/div/div[1]/div/span').text
         description = self.driver.find_element_by_class_name('BreakWord').text
 
+
+
     def send_msg_to_mach(self):
         girl_name = self.driver.find_element_by_xpath('//*[@id="modal-manager-canvas"]/div/div/div[1]/div/div[3]/div[2]')
         smtm = self.driver.find_element_by_xpath('//*[@id="modal-manager-canvas"]/div/div/div[1]/div/div[3]/div[3]/form')
         # smtm.send_keys(f'Cześć {} czy zostałaś już nominowana do hot16? ;P')
+
+    def send_msg(self):
+        maches = self.driver.find_elements_by_class_name('matchListItem')
+        name = maches[1].text
+        maches[1].click()
+        sleep(2)
+        msg = self.driver.find_element_by_class_name('sendMessageForm__input')
+        msg.send_keys('Część mam nadzieję, że potrafisz śpiewać bo własnie nominuję Cię do ho16!')
+        self.driver.find_element_by_xpath('//*[@id="content"]/div/div[1]/div/div/main/div/div[2]/form/button/span')
+        sleep(2)
+        pairs = self.driver.find_element_by_xpath('//*[@id="match-tab"]')
+        pairs.click()
+        """Automatyczne wysyłanie wiadomości do zmachowanej pary"""
 
 # Automatyczne przesuwanie po profilach
     def auto_swipe(self):
