@@ -119,14 +119,16 @@ class TinderBot():
         maches = bot.driver.find_elements_by_class_name('matchListItem')
         maches[1].click()
         bot.driver.fullscreen_window()
+        sleep(2)
         name = self.driver.find_element_by_xpath('//*[@id="content"]/div/div[1]/div/main/div[1]/div/div/div/div[2]/div/div[1]/div/div/div[2]/div[1]/div/div[1]/div')
-        name = name.text
+        nametxt = name.text
         age = self.driver.find_elements_by_xpath('.//span[@class = "Whs(nw) Fz($l)"]')
-        age = age[0].text
-        job = self.driver.find_element_by_xpath('//*[@id="content"]/div/div[1]/div/main/div[1]/div/div/div/div[2]/div/div[1]/div/div/div[2]/div[1]/div/div[2]/div[1]/div[2]').text
-        description = self.driver.find_element_by_xpath('//*[@id="content"]/div/div[1]/div/main/div[1]/div/div/div/div[2]/div/div[1]/div/div/div[2]/div[2]/div/span/text()').text
+        agetxt = age[0].text
+        # job = self.driver.find_element_by_xpath('//*[@id="content"]/div/div[1]/div/main/div[1]/div/div/div/div[2]/div/div[1]/div/div/div[2]/div[1]/div/div[2]/div[1]/div[2]').text
+        # description = self.driver.find_element_by_xpath('//*[@id="content"]/div/div[1]/div/main/div[1]/div/div/div/div[2]/div/div[1]/div/div/div[2]/div[2]/div/span/text()')
+        # descriptiontxt = description.text
         try:
-            print(" ".join(name,age,job))
+            print(f"{nametxt} wiek to {agetxt}")
         except NameError:
             print('Nie można wyświetlić atrybutów')
 
