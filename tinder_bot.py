@@ -83,24 +83,54 @@ class TinderBot():
         smtm = self.driver.find_element_by_xpath('//*[@id="modal-manager-canvas"]/div/div/div[1]/div/div[3]/div[3]/form')
         # smtm.send_keys(f'Cześć {} czy zostałaś już nominowana do hot16? ;P')
 
-    def send_msg(self):
-        maches = self.driver.find_elements_by_class_name('matchListItem')
-        name = maches[1].text
-        maches[1].click()
-        sleep(2)
-        age = self.driver.find_elements_by_xpath('.//span[@class = "Whs(nw) Fz($l)"]')
-        age = age[0].text
-        msg = self.driver.find_element_by_class_name('sendMessageForm__input')
-        msg.send_keys(f'Cześć {name} mam nadzieję, że potrafisz śpiewać bo własnie nominuję Cię do hot{age};)')
-        sleep(1)
-        self.driver.find_element_by_class_name('button').click()
-        sleep(2)
-        pairs = self.driver.find_element_by_xpath('//*[@id="match-tab"]')
-        pairs.click()
+
+    def send_msg(self, count = 10):
+        w_count = 0
+        while w_count < count:
+            maches = self.driver.find_elements_by_class_name('matchListItem')
+            name = maches[1].text
+            maches[1].click()
+            # Maksymalne rozszerzenie okna wyszukiwarki
+            self.driver.fullscreen_window()
+
+            sleep(2)
+            age = self.driver.find_elements_by_xpath('.//span[@class = "Whs(nw) Fz($l)"]')
+            age = age[0].text
+            msg = self.driver.find_element_by_class_name('sendMessageForm__input')
+            msg.send_keys(f'Cześć {name} jestem ciekawy Twojej osoby, co powiesz na spotkanie przy winku?;)')
+            sleep(1)
+            self.driver.minimize_window()
+
+            element = self.driver.find_element_by_xpath('//*[@id="content"]/div/div[1]/div/main/div[1]/div/div/div/div[1]/div/div/div[3]/form/button')
+            self.driver.execute_script("arguments[0].click();", element)
+
+            sleep(2)
+            pairs = self.driver.find_element_by_xpath('//*[@id="match-tab"]')
+            pairs.click()
+            sleep(2)
+            if len(maches) < 2:
+                break
+            print(f'Wysłano {w_count+1} wiadomość do {name}')
+            w_count += 1
 
         """Automatyczne wysyłanie wiadomości do zmachowanej pary"""
 
-# Automatyczne przesuwanie po profilach
+    def colecting_data(self):
+        maches = bot.driver.find_elements_by_class_name('matchListItem')
+        maches[1].click()
+        bot.driver.fullscreen_window()
+        name = self.driver.find_element_by_xpath('//*[@id="content"]/div/div[1]/div/main/div[1]/div/div/div/div[2]/div/div[1]/div/div/div[2]/div[1]/div/div[1]/div')
+        name = name.text
+        age = self.driver.find_elements_by_xpath('.//span[@class = "Whs(nw) Fz($l)"]')
+        age = age[0].text
+        job = self.driver.find_element_by_xpath('//*[@id="content"]/div/div[1]/div/main/div[1]/div/div/div/div[2]/div/div[1]/div/div/div[2]/div[1]/div/div[2]/div[1]/div[2]').text
+        description = self.driver.find_element_by_xpath('//*[@id="content"]/div/div[1]/div/main/div[1]/div/div/div/div[2]/div/div[1]/div/div/div[2]/div[2]/div/span/text()').text
+        try:
+            print(" ".join(name,age,job))
+        except NameError:
+            print('Nie można wyświetlić atrybutów')
+
+    # Automatyczne przesuwanie po profilach
     def auto_swipe(self):
         r_counter = 0
         l_counter = 0
