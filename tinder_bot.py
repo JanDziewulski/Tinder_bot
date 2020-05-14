@@ -115,7 +115,7 @@ class TinderBot():
 
         """Automatyczne wysyłanie wiadomości do zmachowanej pary"""
 
-    def colecting_data(self):
+    def collecting_data(self):
         maches = bot.driver.find_elements_by_class_name('matchListItem')
         maches[1].click()
         bot.driver.fullscreen_window()
