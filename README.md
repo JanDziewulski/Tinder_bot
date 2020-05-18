@@ -1,5 +1,5 @@
 # Tinder_bot
-Tinder swipe automatic with autswaping and texting functionality
+Tinder swipe automatic with autoswaping and texting functionality
 ## Installation
 
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install selenium.
