@@ -9,7 +9,7 @@ class TinderBot():
     def __init__(self):
         self.driver = webdriver.Chrome()
 
-# Logowanie do platformy
+    # Tinder login
     def login(self):
         def check_exists_by_xpath(xpath):
             try:
@@ -58,114 +58,146 @@ class TinderBot():
         popup_2 = self.driver.find_element_by_css_selector('button[aria-label="Nie interesuje mnie to"]')
         popup_2.click()
 
-# Dodawanie lajka dla danego profilu
+        """Main part of program, allows login to platform"""
+
+    # Like
     def like(self):
         like_btn = self.driver.find_element_by_css_selector('button[aria-label="Polub"]')
         like_btn.click()
 
-# Dawanie dislike dla danego profilu
+    # Dislike
     def dislike(self):
         dislike_btn = self.driver.find_element_by_css_selector('button[aria-label="Żegnam"]')
-        # self.driver.get()
         dislike_btn.click()
 
-
-#Wyszukiwanie imienia
+    # Name searching
     def read_name(self):
-        g_name = self.driver.find_element_by_xpath('//*[@id="content"]/div/div[1]/div/div/main/div/div[1]/div/div[1]/div[3]/div[6]/div/div[1]/div/div/span').text
-        age = self.driver.find_element_by_xpath('//*[@id="content"]/div/div[1]/div/div/main/div/div[1]/div/div[1]/div[3]/div[6]/div/div[1]/div/span').text
+        g_name = self.driver.find_element_by_xpath(
+            '//*[@id="content"]/div/div[1]/div/div/main/div/div[1]/div/div[1]/div[3]/div[6]/div/div[1]/div/div/span').text
+        age = self.driver.find_element_by_xpath(
+            '//*[@id="content"]/div/div[1]/div/div/main/div/div[1]/div/div[1]/div[3]/div[6]/div/div[1]/div/span').text
         description = self.driver.find_element_by_class_name('BreakWord').text
 
-
-
-    def send_msg_to_mach(self):
-        girl_name = self.driver.find_element_by_xpath('//*[@id="modal-manager-canvas"]/div/div/div[1]/div/div[3]/div[2]')
-        smtm = self.driver.find_element_by_xpath('//*[@id="modal-manager-canvas"]/div/div/div[1]/div/div[3]/div[3]/form')
-        # smtm.send_keys(f'Cześć {} czy zostałaś już nominowana do hot16? ;P')
-
-
-    def send_msg(self, count = 10):
+    def send_msg(self, count=10):
         w_count = 0
         while w_count < count:
             maches = self.driver.find_elements_by_class_name('matchListItem')
             name = maches[1].text
             maches[1].click()
-            # Maksymalne rozszerzenie okna wyszukiwarki
             self.driver.fullscreen_window()
+            """Max size of web browser"""
 
-            sleep(2)
+            sleep(1)
             age = self.driver.find_elements_by_xpath('.//span[@class = "Whs(nw) Fz($l)"]')
             age = age[0].text
             msg = self.driver.find_element_by_class_name('sendMessageForm__input')
-            msg.send_keys(f'Cześć {name} jestem ciekawy Twojej osoby, co powiesz na spotkanie przy winku?;)')
+            msg.send_keys(
+                f'Cześć {name}, mam nadzieję, że lubisz życie na krawędzi i napijesz się piwka w parku bez maseczki ;) Jeśli nie, kasuj ;)')
             sleep(1)
             self.driver.minimize_window()
 
-            element = self.driver.find_element_by_xpath('//*[@id="content"]/div/div[1]/div/main/div[1]/div/div/div/div[1]/div/div/div[3]/form/button')
+            element = self.driver.find_element_by_xpath(
+                '//*[@id="content"]/div/div[1]/div/main/div[1]/div/div/div/div[1]/div/div/div[3]/form/button')
             self.driver.execute_script("arguments[0].click();", element)
+
+            sleep(1)
+            pairs = self.driver.find_element_by_xpath('//*[@id="match-tab"]')
+            pairs.click()
+            sleep(1)
+            if len(maches) < 2:
+                break
+            print(f'Wysłano {w_count + 1} wiadomość do {name}')
+            w_count += 1
+
+        """Automatic sending text msg to matched pairs"""
+
+    def collecting_data(self, count=10):
+        w_count = 0
+        while w_count < count:
+            maches = bot.driver.find_elements_by_class_name('matchListItem')
+            maches[1].click()
+            bot.driver.fullscreen_window()
+            sleep(2)
+
+            try:
+                name = self.driver.find_element_by_xpath(
+                    '//*[@id="content"]/div/div[1]/div/main/div[1]/div/div/div/div[2]/div/div[1]/div/div/div[2]/div[1]/div/div[1]/div')
+                nametxt = name.text
+            except NameError:
+                print('Nie można pobrać imienia')
+
+            try:
+                age = self.driver.find_elements_by_xpath('.//span[@class = "Whs(nw) Fz($l)"]')
+                agetxt = age[0].text
+            except NameError:
+                print('Nie można pobrać wieku')
+
+            try:
+                description = self.driver.find_element_by_xpath(
+                    '//*[@id="content"]/div/div[1]/div/main/div[1]/div/div/div/div[2]/div/div[1]/div/div/div[2]/div[2]')
+                descriptiontxt = description.text
+            except NameError:
+                print('Nie można pobrać opisu')
 
             sleep(2)
             pairs = self.driver.find_element_by_xpath('//*[@id="match-tab"]')
             pairs.click()
             sleep(2)
+
             if len(maches) < 2:
                 break
-            print(f'Wysłano {w_count+1} wiadomość do {name}')
+
+            print(f"{nametxt}, {agetxt}, {descriptiontxt}")
+
             w_count += 1
 
-        """Automatyczne wysyłanie wiadomości do zmachowanej pary"""
+            df = pd.DataFrame({'name': [nametxt],
+                               'age': [agetxt],
+                               'description': [descriptiontxt]})
 
-    def collecting_data(self):
-        maches = bot.driver.find_elements_by_class_name('matchListItem')
-        maches[1].click()
-        bot.driver.fullscreen_window()
+            df.to_csv('test_tnd.csv', index=False)
+
+
+"""Next to update"""
+
+
+# Auto swaping
+def auto_swipe(self, count=10):
+    r_counter = 0
+    l_counter = 0
+    # while True:
+    for i in range(count):
         sleep(2)
-        name = self.driver.find_element_by_xpath('//*[@id="content"]/div/div[1]/div/main/div[1]/div/div/div/div[2]/div/div[1]/div/div/div[2]/div[1]/div/div[1]/div')
-        nametxt = name.text
-        age = self.driver.find_elements_by_xpath('.//span[@class = "Whs(nw) Fz($l)"]')
-        agetxt = age[0].text
-        # job = self.driver.find_element_by_xpath('//*[@id="content"]/div/div[1]/div/main/div[1]/div/div/div/div[2]/div/div[1]/div/div/div[2]/div[1]/div/div[2]/div[1]/div[2]').text
-        # description = self.driver.find_element_by_xpath('//*[@id="content"]/div/div[1]/div/main/div[1]/div/div/div/div[2]/div/div[1]/div/div/div[2]/div[2]/div/span/text()')
-        # descriptiontxt = description.text
         try:
-            print(f"{nametxt} wiek to {agetxt}")
-        except NameError:
-            print('Nie można wyświetlić atrybutów')
-
-    # Automatyczne przesuwanie po profilach
-    def auto_swipe(self):
-        r_counter = 0
-        l_counter = 0
-        # while True:
-        for i in range(15):
-            sleep(5)
+            rand = random()
+            if rand < 0.73:
+                self.like()
+                r_counter += 1
+                print(f"{r_counter}te przesunięcie w prawo")
+                i += 1
+            else:
+                self.dislike()
+                l_counter += 1
+                print(f"{l_counter}te przesunięcie w lewo")
+                i += 1
+        except Exception:
             try:
-                rand = random()
-                if rand < 0.73:
-                    self.like()
-                    r_counter += 1
-                    print(f"{r_counter}te przesunięcie w prawo")
-                    i += 1
-                else:
-                    self.dislike()
-                    l_counter += 1
-                    print(f"{l_counter}te przesunięcie w lewo")
-                    i += 1
+                self.close_popup()
             except Exception:
-                try:
-                    self.close_popup()
-                except Exception:
-                    self.close_match()
-
-    def close_popup(self):
-        popup_3 = self.driver.find_element_by_xpath('//*[@id="modal-manager-canvas"]/div/div/div[1]/div/div[3]/a')
-        popup_3.click()
-
-    def close_match(self):
-        match_popup = self.driver.find_element_by_xpath('//*[@id="modal-manager-canvas"]/div/div/div[1]/div/div[3]/a')
-        match_popup.click()
+                self.close_match()
 
 
+"""Automatic swiping and counting swipes"""
+
+
+def close_popup(self):
+    popup_3 = self.driver.find_element_by_xpath('//*[@id="modal-manager-canvas"]/div/div/div[1]/div/div[3]/a')
+    popup_3.click()
+
+
+def close_match(self):
+    match_popup = self.driver.find_element_by_xpath('//*[@id="modal-manager-canvas"]/div/div/div[1]/div/div[3]/a')
+    match_popup.click()
 
 
 bot = TinderBot()
