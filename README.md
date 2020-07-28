@@ -15,3 +15,7 @@ Please make sure to update tests as appropriate.
 
 ## Enjoy 
 Create own config file with username and password 
+
+## Flowchart for next features 
+
+![FlowChart](https://github.com/https://github.com/JanDziewulski/Tinder_bot/tb_flowchart.png?raw=true)
